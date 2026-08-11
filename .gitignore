@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# SECRETS - NEVER upload these
+.env
+
+# Logs / cache
+*.log
+*.sqlite3
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChefGPT AI – Intelligent Recipe Generator</title>
+  <link rel="stylesheet" href="/style.css" />
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LOADING OVERLAY
+═══════════════════════════════════════════════════════════ -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">ChefGPT AI is thinking...</div>
+  <div class="loading-sub" id="loadingSubText">Activating AI agents...</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOAST STACK
+═══════════════════════════════════════════════════════════ -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOP NAVBAR
+═══════════════════════════════════════════════════════════ -->
+<nav class="top-navbar">
+  <button class="sidebar-toggle me-3" id="sidebarToggle" title="Toggle Sidebar">
+    <i class="bi bi-list"></i>
+  </button>
+  <div class="navbar-brand">
+    <span class="brand-icon">🍳</span>
+    <span>ChefGPT AI</span>
+  </div>
+  <div class="navbar-right">
+    <span class="status-badge demo" id="statusBadge">
+      <span class="status-dot"></span>
+      <span id="statusText">Demo Mode</span>
+    </span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SIDEBAR
+═══════════════════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-section-label">Main</div>
+  <div class="sidebar-item active" data-section="dashboard">
+    <span class="icon">🏠</span> Dashboard
+  </div>
+  <div class="sidebar-item" data-section="generator">
+    <span class="icon">🍳</span> Recipe Generator
+  </div>
+  <div class="sidebar-item" data-section="knowledge">
+    <span class="icon">📚</span> Recipe Knowledge
+  </div>
+  <div class="sidebar-section-label">Tools</div>
+  <div class="sidebar-item" data-section="adaptation">
+    <span class="icon">🥗</span> Recipe Adaptation
+  </div>
+  <div class="sidebar-item" data-section="substitution">
+    <span class="icon">🔄</span> Substitutions
+  </div>
+  <div class="sidebar-item" data-section="nutrition">
+    <span class="icon">🥑</span> Nutrition
+  </div>
+  <div class="sidebar-item" data-section="shopping">
+    <span class="icon">🛒</span> Shopping List
+  </div>
+  <div class="sidebar-section-label">AI</div>
+  <div class="sidebar-item" data-section="chat">
+    <span class="icon">🤖</span> AI Chat
+  </div>
+  <div class="sidebar-item" data-section="workflow">
+    <span class="icon">⚡</span> Agent Workflow
+  </div>
+  <div class="sidebar-item" data-section="about">
+    <span class="icon">⚙</span> About
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN CONTENT
+═══════════════════════════════════════════════════════════ -->
+<main class="main-content" id="mainContent">
+
+<!-- ─────────────────────────────────────────────────────────
+     DASHBOARD
+───────────────────────────────────────────────────────── -->
+<section class="section-panel active" id="section-dashboard">
+  <div class="section-header">
+    <h2>🏠 Dashboard</h2>
+    <p>Your intelligent cooking companion powered by IBM Granite AI.</p>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+      <div class="stat-card orange">
+        <div class="stat-icon">🍽️</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statRecipes">0</div>
+          <div class="stat-label">Recipes Generated</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card blue">
+        <div class="stat-icon">📄</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statDocs">0</div>
+          <div class="stat-label">Documents Uploaded</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card purple">
+        <div class="stat-icon">🤖</div>
+        <div class="stat-info">
+          <div class="stat-value">5</div>
+          <div class="stat-label">AI Agents Active</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-card green">
+        <div class="stat-icon">🥗</div>
+        <div class="stat-info">
+          <div class="stat-value">8</div>
+          <div class="stat-label">Dietary Options</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Cards -->
+  <div class="section-header"><h2>✨ Key Features</h2></div>
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="feature-card">
+        <span class="feature-icon">🔍</span>
+        <div class="feature-title">AI Recipe Search</div>
+        <div class="feature-desc">Natural language search across your recipe knowledge base</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="feature-card">
+        <span class="feature-icon">📡</span>
+        <div class="feature-title">RAG-Powered</div>
+        <div class="feature-desc">Retrieval-Augmented Generation for accurate answers</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="feature-card">
+        <span class="feature-icon">🎯</span>
+        <div class="feature-title">Personalized</div>
+        <div class="feature-desc">Recipes tailored to your diet, ingredients and preferences</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="feature-card">
+        <span class="feature-icon">🔄</span>
+        <div class="feature-title">Substitutions</div>
+        <div class="feature-desc">Smart ingredient swaps for any dietary need</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="feature-card">
+        <span class="feature-icon">🥑</span>
+        <div class="feature-title">Nutrition Info</div>
+        <div class="feature-desc">AI-estimated nutritional breakdown per recipe</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+      <div class="feature-card">
+        <span class="feature-icon">🛒</span>
+        <div class="feature-title">Smart Shopping</div>
+        <div class="feature-desc">Categorized shopping list from any recipe</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How It Works -->
+  <div class="section-header"><h2>⚙️ How It Works</h2></div>
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="card text-center p-3 h-100">
+        <div style="font-size:2rem;margin-bottom:.5rem;">📤</div>
+        <div class="fw-bold mb-1">1. Upload Recipes</div>
+        <div class="small text-muted">Upload PDF or TXT recipe documents to your knowledge base</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center p-3 h-100">
+        <div style="font-size:2rem;margin-bottom:.5rem;">🔍</div>
+        <div class="fw-bold mb-1">2. AI Searches</div>
+        <div class="small text-muted">RAG retrieves the most relevant recipe context</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center p-3 h-100">
+        <div style="font-size:2rem;margin-bottom:.5rem;">🎯</div>
+        <div class="fw-bold mb-1">3. Personalize</div>
+        <div class="small text-muted">IBM Granite generates a personalized recipe for you</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card text-center p-3 h-100">
+        <div style="font-size:2rem;margin-bottom:.5rem;">👨‍🍳</div>
+        <div class="fw-bold mb-1">4. Start Cooking</div>
+        <div class="small text-muted">Follow step-by-step instructions and enjoy your meal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     RECIPE GENERATOR
+───────────────────────────────────────────────────────── -->
+<section class="section-panel" id="section-generator">
+  <div class="section-header">
+    <h2>🍳 Recipe Generator</h2>
+    <p>Tell ChefGPT AI what you have and it will create a personalized recipe.</p>
+  </div>
+  <div class="row g-4">
+    <!-- Form -->
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header-custom"><i class="bi bi-sliders"></i> Recipe Preferences</div>
+        <div class="card-body">
+          <div class="form-group-custom">
+            <label class="form-label-custom">🥕 Available Ingredients</label>
+            <textarea class="form-control-custom" id="genIngredients" rows="3"
+              placeholder="e.g. paneer, onion, tomato, capsicum, rice"></textarea>
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-custom">💬 What would you like to cook?</label>
+            <input class="form-control-custom" id="genQuery" type="text"
+              placeholder="e.g. a spicy Indian curry, quick pasta, healthy breakfast" />
+          </div>
+          <div class="row g-2">
+            <div class="col-6">
+              <div class="form-group-custom">
+                <label class="form-label-custom">🍜 Cuisine</label>
+                <select class="form-control-custom" id="genCuisine">
+                  <option>Any</option>
+                  <option>Indian</option>
+                  <option>Italian</option>
+                  <option>Chinese</option>
+                  <option>Mexican</option>
+                  <option>Korean</option>
+                  <option>American</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group-custom">
+                <label class="form-label-custom">🥗 Dietary Preference</label>
+                <select class="form-control-custom" id="genDiet">
+                  <option>No Preference</option>
+                  <option>Vegetarian</option>
+                  <option>Vegan</option>
+                  <option>Gluten-Free</option>
+                  <option>Keto</option>
+                  <option>High-Protein</option>
+                  <option>Low-Calorie</option>
+                  <option>Sugar-Free</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group-custom">
+                <label class="form-label-custom">⏱ Cooking Time</label>
+                <select class="form-control-custom" id="genTime">
+                  <option>Any</option>
+                  <option>15 minutes</option>
+                  <option>30 minutes</option>
+                  <option>60 minutes</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group-custom">
+                <label class="form-label-custom">⭐ Difficulty</label>
+                <select class="form-control-custom" id="genDifficulty">
+                  <option>Any</option>
+                  <option>Easy</option>
+                  <option>Medium</option>
+                  <option>Hard</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="form-group-custom">
+                <label class="form-label-custom">👥 Servings</label>
+                <input class="form-control-custom" id="genServings" type="number" value="2" min="1" max="20"/>
+              </div>
+            </div>
+          </div>
+          <button class="btn-primary-custom w-100 mt-2" id="btnGenerate" onclick="generateRecipe()">
+            <i class="bi bi-magic"></i> Generate Recipe
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div class="col-lg-7">
+      <div id="recipeResultArea">
+        <!-- Placeholder -->
+        <div class="card text-center p-5" id="recipePlaceholder">
+          <div style="font-size:4rem;margin-bottom:1rem;">🍽️</div>
+          <h5 class="fw-bold mb-2">Your Recipe Will Appear Here</h5>
+          <p class="text-muted small">Fill in your ingredients and preferences, then click Generate Recipe.</p>
+          <div class="mt-3">
+            <span class="suggestion-pill" onclick="quickFill('paneer')">paneer, tomato, onion</span>
+            <span class="suggestion-pill" onclick="quickFill('pasta')">pasta, garlic, zucchini</span>
+            <span class="suggestion-pill" onclick="quickFill('potato')">potato, bread, spices</span>
+          </div>
+        </div>
+        <!-- Recipe Card (hidden until generated) -->
+        <div class="recipe-result-card d-none" id="recipeCard">
+          <div class="recipe-result-header">
+            <h2 id="rcpName">Recipe Name</h2>
+            <p id="rcpDesc">Description</p>
+            <div class="recipe-meta-chips">
+              <span class="meta-chip">⏱ <span id="rcpPrepTime">–</span></span>
+              <span class="meta-chip">🔥 <span id="rcpCookTime">–</span></span>
+              <span class="meta-chip">👥 <span id="rcpServings">–</span></span>
+              <span class="meta-chip">⭐ <span id="rcpDifficulty">–</span></span>
+              <span class="meta-chip">🍜 <span id="rcpCuisine">–</span></span>
+            </div>
+          </div>
+          <div class="recipe-result-body">
+            <h6 class="fw-bold mb-2">🥕 Ingredients</h6>
+            <div class="ingredients-grid" id="rcpIngredients"></div>
+            <div class="divider"></div>
+            <h6 class="fw-bold mb-2">📋 Instructions</h6>
+            <ol class="instruction-list" id="rcpInstructions"></ol>
+            <div class="divider" id="tipsDiv"></div>
+            <h6 class="fw-bold mb-2" id="tipsHeading" style="display:none">💡 Cooking Tips</h6>
+            <ul class="tips-list" id="rcpTips"></ul>
+            <div id="rcpSources"></div>
+            <div id="rcpAiNote" class="mt-3 small text-muted"></div>
+          </div>
+          <div class="recipe-actions">
+            <button class="btn-primary-custom btn-sm-custom" onclick="generateShoppingFromRecipe()">
+              <i class="bi bi-cart-plus"></i> Shopping List
+            </button>
+            <button class="btn-outline-custom btn-sm-custom" onclick="analyzeCurrentNutrition()">
+              <i class="bi bi-bar-chart"></i> Nutrition
+            </button>
+            <button class="btn-outline-custom btn-sm-custom" onclick="adaptCurrentRecipe()">
+              <i class="bi bi-arrows-angle-contract"></i> Adapt
+            </button>
+            <button class="btn-secondary-custom btn-sm-custom" onclick="copyRecipe()">
+              <i class="bi bi-clipboard"></i> Copy
+            </button>
+            <button class="btn-secondary-custom btn-sm-custom" onclick="printRecipe()">
+              <i class="bi bi-printer"></i> Print
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     RECIPE KNOWLEDGE CENTER
+───────────────────────────────────────────────────────── -->
+<section class="section-panel" id="section-knowledge">
+  <div class="section-header">
+    <h2>📚 Recipe Knowledge Center</h2>
+    <p>Upload recipe documents to power your AI knowledge base.</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card mb-3">
+        <div class="card-header-custom"><i class="bi bi-cloud-upload"></i> Upload Recipe Document</div>
+        <div class="card-body">
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()"
+               ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+            <div class="upload-icon">📄</div>
+            <h5>Drag & Drop or Click to Upload</h5>
+            <p>Upload PDF or TXT recipe documents</p>
+            <div class="upload-formats">
+              <span class="format-badge">PDF</span>
+              <span class="format-badge">TXT</span>
+            </div>
+          </div>
+          <input type="file" id="fileInput" accept=".pdf,.txt" style="display:none" onchange="uploadFile(event)"/>
+          <div id="uploadProgress" class="mt-3 d-none">
+            <div class="small fw-bold mb-1" id="uploadFileName"></div>
+            <div class="progress-bar-custom"><div class="progress-fill" id="uploadProgressFill" style="width:0%"></div></div>
+            <div class="small text-muted mt-1" id="uploadStatus"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Natural Language Search -->
+      <div class="card">
+        <div class="card-header-custom"><i class="bi bi-search"></i> Search Recipe Knowledge</div>
+        <div class="card-body">
+          <div class="d-flex gap-2">
+            <input class="form-control-custom" id="searchQuery" type="text"
+              placeholder="e.g. vegetarian Indian recipe with potato"/>
+            <button class="btn-primary-custom" onclick="searchRecipes()" style="white-space:nowrap">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
+          <div class="mt-3" id="searchResults"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header-custom">
+          <i class="bi bi-folder2-open"></i> Uploaded Documents
+          <span class="ms-auto small text-muted" id="docCount">0 documents</span>
+        </div>
+        <div class="card-body" id="docList">
+          <div class="text-center text-muted py-4" id="noDocsMsg">
+            <div style="font-size:2.5rem;margin-bottom:.5rem;">📂</div>
+            <div>No documents uploaded yet.</div>
+            <div class="small mt-1">Upload a PDF or TXT file to get started.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     RECIPE ADAPTATION
+───────────────────────────────────────────────────────── -->
+<section class="section-panel" id="section-adaptation">
+  <div class="section-header">
+    <h2>🥗 Recipe Adaptation</h2>
+    <p>Adapt any recipe to your dietary preference using AI.</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header-custom"><i class="bi bi-pencil-square"></i> Adapt a Recipe</div>
+        <div class="card-body">
+          <div class="form-group-custom">
+            <label class="form-label-custom">Recipe Text</label>
+            <textarea class="form-control-custom" id="adaptRecipeText" rows="8"
+              placeholder="Paste or type your recipe here...&#10;&#10;Or generate a recipe first and click 'Adapt' from there."></textarea>
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-custom">Target Dietary Preference</label>
+            <select class="form-control-custom" id="adaptDiet">
+              <option>Vegetarian</option>
+              <option>Vegan</option>
+              <option>Gluten-Free</option>
+              <option>Keto</option>
+              <option>Sugar-Free</option>
+              <option>High-Protein</option>
+              <option>Low-Calorie</option>
+            </select>
+          </div>
+          <button class="btn-primary-custom w-100" onclick="adaptRecipe()">
+            <i class="bi bi-arrow-repeat"></i> Adapt Recipe
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="card" id="adaptResultCard" style="display:none;">
+        <div class="card-header-custom"><i class="bi bi-check-circle text-success"></i> Adapted Recipe</div>
+        <div class="card-body">
+          <div class="mb-2">
+            <span class="small fw-bold">Changes Made:</span>
+            <div id="adaptChanges" class="mt-1"></div>
+          </div>
+          <div class="divider"></div>
+          <pre id="adaptResult" style="white-space:pre-wrap;font-size:.85rem;font-family:inherit;"></pre>
+        </div>
+      </div>
+      <div class="card text-center p-5" id="adaptPlaceholder">
+        <div style="font-size:3rem;margin-bottom:1rem;">🥗</div>
+        <h6 class="fw-bold">Paste a recipe and choose a diet</h6>
+        <p class="text-muted small">ChefGPT AI will modify ingredients and instructions to match your preference.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     INGREDIENT SUBSTITUTION
+───────────────────────────────────────────────────────── -->
+<section class="section-panel" id="section-substitution">
+  <div class="section-header">
+    <h2>🔄 Ingredient Substitutions</h2>
+    <p>Find smart replacements for any ingredient you don't have.</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header-custom"><i class="bi bi-search"></i> Find Substitution</div>
+        <div class="card-body">
+          <div class="form-group-custom">
+            <label class="form-label-custom">Ingredient to Replace</label>
+            <input class="form-control-custom" id="subIngredient" type="text"
+              placeholder="e.g. eggs, butter, milk, paneer"/>
+          </div>
+          <div class="mb-3">
+            <div class="small fw-bold mb-2">Common Ingredients:</div>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="suggestion-pill" onclick="setSubIngredient('egg')">Egg</span>
+              <span class="suggestion-pill" onclick="setSubIngredient('butter')">Butter</span>
+              <span class="suggestion-pill" onclick="setSubIngredient('milk')">Milk</span>
+              <span class="suggestion-pill" onclick="setSubIngredient('paneer')">Paneer</span>
+              <span class="suggestion-pill" onclick="setSubIngredient('cream')">Cream</span>
+              <span class="suggestion-pill" onclick="setSubIngredient('sugar')">Sugar</span>
+              <span class="suggestion-pill" onclick="setSubIngredient('flour')">Flour</span>
+              <span class="suggestion-pill" onclick="setSubIngredient('chicken')">Chicken</span>
+            </div>
+          </div>
+          <button class="btn-primary-custom w-100" onclick="findSubstitution()">
+            <i class="bi bi-arrow-left-right"></i> Find Substitutes
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="card">
+        <div class="card-header-custom"><i class="bi bi-list-check"></i> Substitution Results</div>
+        <div class="card-body" id="subResults">
+          <div class="text-center text-muted py-4">
+            <div style="font-size:2.5rem;margin-bottom:.5rem;">🔄</div>
+            <div>Enter an ingredient to find substitutes.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     NUTRITION
+───────────────────────────────────────────────────────── -->
+<section class="section-panel" id="section-nutrition">
+  <div class="section-header">
+    <h2>🥑 Nutrition Analysis</h2>
+    <p>Get AI-estimated nutritional information for any recipe.</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header-custom"><i class="bi bi-clipboard2-pulse"></i> Analyze Recipe</div>
+        <div class="card-body">
+          <div class="form-group-custom">
+            <label class="form-label-custom">Recipe Text</label>
+            <textarea class="form-control-custom" id="nutRecipeText" rows="8"
+              placeholder="Paste your recipe text here..."></textarea>
+          </div>
+          <button class="btn-primary-custom w-100" onclick="analyzeNutrition()">
+            <i class="bi bi-bar-chart-fill"></i> Analyze Nutrition
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="card" id="nutResultCard" style="display:none;">
+        <div class="card-header-custom"><i class="bi bi-bar-chart text-success"></i> Nutritional Information</div>
+        <div class="card-body">
+          <div class="nutrition-grid" id="nutritionGrid"></div>
+          <div class="divider"></div>
+          <div id="nutSummary" class="small mb-2"></div>
+          <div class="small text-muted" id="nutDisclaimer"></div>
+        </div>
+      </div>
+      <div class="card text-center p-5" id="nutPlaceholder">
+        <div style="font-size:3rem;margin-bottom:1rem;">🥑</div>
+        <h6 class="fw-bold">Nutrition analysis will appear here</h6>
+        <p class="text-muted small">Paste a recipe and click Analyze Nutrition.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     SHOPPING LIST
+───────────────────────────────────────────────────────── -->
+<section class="section-panel" id="section-shopping">
+  <div class="section-header">
+    <h2>🛒 Shopping List</h2>
+    <p>Generate a categorized shopping list from any recipe.</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header-custom"><i class="bi bi-cart3"></i> Generate Shopping List</div>
+        <div class="card-body">
+          <div class="form-group-custom">
+            <label class="form-label-custom">Recipe Ingredients (one per line)</label>
+            <textarea class="form-control-custom" id="shopIngredients" rows="8"
+              placeholder="250g paneer&#10;2 tomatoes&#10;1 onion&#10;2 tbsp butter&#10;1 tsp garam masala"></textarea>
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-custom">Items You Already Have (optional)</label>
+            <input class="form-control-custom" id="shopAvailable" type="text"
+              placeholder="e.g. onion, salt, oil"/>
+          </div>
+          <button class="btn-primary-custom w-100" onclick="generateShoppingList()">
+            <i class="bi bi-cart-plus"></i> Generate Shopping List
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="card" id="shopResultCard" style="display:none;">
+        <div class="card-header-custom">
+          <i class="bi bi-list-check"></i> Your Shopping List
+          <span class="ms-auto small text-muted" id="shopItemCount"></span>
+        </div>
+        <div class="card-body" id="shopList"></div>
+        <div class="recipe-actions">
+          <button class="btn-outline-custom btn-sm-custom" onclick="copyShoppingList()">
+            <i class="bi bi-clipboard"></i> Copy List
+          </button>
+          <button class="btn-secondary-custom btn-sm-custom" onclick="printShoppingList()">
+            <i class="bi bi-printer"></i> Print
+          </button>
+          <button class="btn-secondary-custom btn-sm-custom" onclick="clearCompleted()">
+            <i class="bi bi-check2-all"></i> Clear Done
+          </button>
+        </div>
+      </div>
+      <div class="card text-center p-5" id="shopPlaceholder">
+        <div style="font-size:3rem;margin-bottom:1rem;">🛒</div>
+        <h6 class="fw-bold">Shopping list will appear here</h6>
+        <p class="text-muted small">Enter ingredients and click Generate Shopping List.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     AI CHAT
+───────────────────────────────────────────────────────── -->
+<section class="section-panel" id="section-chat">
+  <div class="section-header">
+    <h2>🤖 AI Cooking Chat</h2>
+    <p>Ask ChefGPT AI anything about cooking, recipes or ingredients.</p>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Suggestions -->
+      <div class="chat-suggestions mb-3">
+        <span class="suggestion-pill" onclick="sendSuggestion(this)">What can I make with paneer?</span>
+        <span class="suggestion-pill" onclick="sendSuggestion(this)">Suggest a vegan pasta recipe</span>
+        <span class="suggestion-pill" onclick="sendSuggestion(this)">What can replace butter in brownies?</span>
+        <span class="suggestion-pill" onclick="sendSuggestion(this)">High-protein breakfast ideas</span>
+        <span class="suggestion-pill" onclick="sendSuggestion(this)">Quick dinner under 20 minutes</span>
+      </div>
+      <div class="chat-container">
+        <div class="chat-header">
+          <div class="chat-avatar">🍳</div>
+          <div>
+            <h6>ChefGPT AI</h6>
+            <small>Powered by IBM Granite · <span id="chatMode">Demo Mode</span></small>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message bot">
+            <div class="msg-avatar">🍳</div>
+            <div class="msg-bubble">
+              Hello! I'm ChefGPT AI, your intelligent cooking companion. 🍳
+
+I can help you with recipes, ingredient substitutions, dietary adaptations, nutrition info and more!
+
+Try asking: <em>"What can I make with paneer and tomatoes?"</em>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <input class="chat-input" id="chatInput" type="text"
+            placeholder="Ask anything about cooking..."
+            onkeydown="if(event.key==='Enter')sendChat()"/>
+          <button class="chat-send-btn" onclick="sendChat()">
+            <i class="bi bi-send-fill"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     AGENT WORKFLOW
+───────────────────────────────────────────────────────── -->
+<section class="section-panel" id="section-workflow">
+  <div class="section-header">
+    <h2>⚡ AI Agent Workflow</h2>
+    <p>Multi-agent collaboration powering ChefGPT AI. Generate a recipe to see the agents in action.</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="card p-3 text-center mb-3">
+        <div style="font-size:2rem;">🧠</div>
+        <h6 class="fw-bold mt-2 mb-1">Master Orchestrator</h6>
+        <p class="text-muted small">Coordinates all agents, understands user intent, and produces the final recipe response.</p>
+        <span class="agent-status-badge waiting" id="orchestratorStatus">Waiting</span>
+      </div>
+      <div class="card p-3 text-center" id="workflowSummaryCard" style="display:none;">
+        <div class="fw-bold mb-2 small">Last Workflow Summary</div>
+        <div id="workflowSummaryContent" class="small text-muted"></div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="workflow-container" id="workflowContainer">
+        <!-- Agent 1 -->
+        <div class="agent-card waiting" id="wf-agent-1">
+          <div class="agent-header">
+            <span class="agent-icon">🔍</span>
+            <div>
+              <div class="agent-name">Recipe Retrieval Agent</div>
+              <div class="agent-purpose">Searches the knowledge base for relevant recipe context</div>
+            </div>
+            <span class="agent-status-badge waiting" id="wf-status-1">Waiting</span>
+          </div>
+          <div class="agent-output" id="wf-output-1"></div>
+        </div>
+        <div class="agent-connector"><span>↓</span></div>
+        <!-- Agent 2 -->
+        <div class="agent-card waiting" id="wf-agent-2">
+          <div class="agent-header">
+            <span class="agent-icon">👨‍🍳</span>
+            <div>
+              <div class="agent-name">Recipe Generation Agent</div>
+              <div class="agent-purpose">Generates personalized recipe using IBM Granite AI</div>
+            </div>
+            <span class="agent-status-badge waiting" id="wf-status-2">Waiting</span>
+          </div>
+          <div class="agent-output" id="wf-output-2"></div>
+        </div>
+        <div class="agent-connector"><span>↓</span></div>
+        <!-- Agent 3 -->
+        <div class="agent-card waiting" id="wf-agent-3">
+          <div class="agent-header">
+            <span class="agent-icon">🥗</span>
+            <div>
+              <div class="agent-name">Recipe Adaptation Agent</div>
+              <div class="agent-purpose">Adapts recipe to match dietary restrictions</div>
+            </div>
+            <span class="agent-status-badge waiting" id="wf-status-3">Waiting</span>
+          </div>
+          <div class="agent-output" id="wf-output-3"></div>
+        </div>
+        <div class="agent-connector"><span>↓</span></div>
+        <!-- Agent 4 -->
+        <div class="agent-card waiting" id="wf-agent-4">
+          <div class="agent-header">
+            <span class="agent-icon">🥑</span>
+            <div>
+              <div class="agent-name">Nutrition Analysis Agent</div>
+              <div class="agent-purpose">Estimates nutritional values per serving</div>
+            </div>
+            <span class="agent-status-badge waiting" id="wf-status-4">Waiting</span>
+          </div>
+          <div class="agent-output" id="wf-output-4"></div>
+        </div>
+        <div class="agent-connector"><span>↓</span></div>
+        <!-- Agent 5 -->
+        <div class="agent-card waiting" id="wf-agent-5">
+          <div class="agent-header">
+            <span class="agent-icon">🛒</span>
+            <div>
+              <div class="agent-name">Shopping List Agent</div>
+              <div class="agent-purpose">Categorises missing ingredients into a shopping list</div>
+            </div>
+            <span class="agent-status-badge waiting" id="wf-status-5">Waiting</span>
+          </div>
+          <div class="agent-output" id="wf-output-5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     ABOUT
+───────────────────────────────────────────────────────── -->
+<section class="section-panel" id="section-about">
+  <div class="about-hero">
+    <h2>🍳 ChefGPT AI</h2>
+    <p>Intelligent Recipe Generator & Cooking Assistant powered by IBM Granite Models and Retrieval-Augmented Generation.</p>
+    <div class="mt-3">
+      <span class="tech-badge">🐍 Python</span>
+      <span class="tech-badge">🌶 Flask</span>
+      <span class="tech-badge">🅱 Bootstrap 5</span>
+      <span class="tech-badge">🤖 IBM watsonx.ai</span>
+      <span class="tech-badge">💎 IBM Granite</span>
+      <span class="tech-badge">📡 RAG</span>
+      <span class="tech-badge">🧠 Agentic AI</span>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header-custom"><i class="bi bi-robot"></i> The Five AI Agents</div>
+        <div class="card-body">
+          <div class="mb-3">
+            <div class="fw-bold">🔍 Recipe Retrieval Agent</div>
+            <div class="small text-muted">Searches uploaded recipe documents and the built-in knowledge base using TF-IDF / cosine similarity (RAG retrieval step).</div>
+          </div>
+          <div class="mb-3">
+            <div class="fw-bold">👨‍🍳 Recipe Generation Agent</div>
+            <div class="small text-muted">Calls IBM Granite via watsonx.ai to generate a personalized recipe, using the retrieved context as grounding.</div>
+          </div>
+          <div class="mb-3">
+            <div class="fw-bold">🥗 Recipe Adaptation Agent</div>
+            <div class="small text-muted">Modifies a recipe's ingredients and instructions to match a target dietary preference (Vegan, Keto, Gluten-Free, etc.).</div>
+          </div>
+          <div class="mb-3">
+            <div class="fw-bold">🥑 Nutrition Analysis Agent</div>
+            <div class="small text-muted">Estimates per-serving nutritional values (calories, protein, carbs, fat, fiber) for the generated recipe.</div>
+          </div>
+          <div>
+            <div class="fw-bold">🛒 Shopping List Agent</div>
+            <div class="small text-muted">Takes recipe ingredients, removes items the user already has, and categorises the rest into a structured shopping list.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-header-custom"><i class="bi bi-diagram-3"></i> RAG Architecture</div>
+        <div class="card-body">
+          <div class="small" style="font-family:monospace;line-height:2;color:var(--text);">
+            USER QUERY<br>
+            &nbsp;&nbsp;&nbsp;↓<br>
+            DOCUMENT SEARCH (TF-IDF)<br>
+            &nbsp;&nbsp;&nbsp;↓<br>
+            TEXT CHUNKING &amp; RETRIEVAL<br>
+            &nbsp;&nbsp;&nbsp;↓<br>
+            RELEVANT CONTEXT<br>
+            &nbsp;&nbsp;&nbsp;↓<br>
+            IBM GRANITE PROMPT<br>
+            &nbsp;&nbsp;&nbsp;↓<br>
+            GENERATED RECIPE<br>
+            &nbsp;&nbsp;&nbsp;↓<br>
+            FRONTEND DISPLAY
+          </div>
+          <div class="divider"></div>
+          <div class="small text-muted">
+            When <strong>IBM credentials are configured</strong>, real IBM Granite AI is used for generation. When credentials are absent, the system uses built-in sample data and intelligent fallback responses to demonstrate the complete workflow.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header-custom"><i class="bi bi-info-circle"></i> About This Project</div>
+    <div class="card-body small text-muted" style="line-height:1.8;">
+      <p>ChefGPT AI is a college project demonstrating <strong>Agentic AI</strong> and <strong>Multi-Agent Collaboration</strong> for intelligent recipe generation. It uses <strong>Retrieval-Augmented Generation (RAG)</strong> to ground AI responses in real recipe documents uploaded by the user.</p>
+      <p>The Master Orchestrator coordinates five specialised agents — retrieval, generation, adaptation, nutrition, and shopping — each handling a distinct responsibility. IBM watsonx.ai and IBM Granite models provide the AI reasoning layer.</p>
+      <p class="mb-0"><strong>To enable IBM Granite AI:</strong> add your <code>WATSONX_API_KEY</code> and <code>WATSONX_PROJECT_ID</code> to the <code>.env</code> file, then restart the Flask server.</p>
+    </div>
+  </div>
+</section>
+
+</main><!-- end .main-content -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════ -->
+<footer class="site-footer" id="siteFooter">
+  <h5>🍳 ChefGPT AI</h5>
+  <div>Intelligent Recipe Generator &amp; Cooking Assistant</div>
+  <div class="mt-1"><small>Powered by IBM watsonx.ai &amp; Granite Models · College Project</small></div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/* ============================================================
+   ChefGPT AI – Frontend JavaScript
+   All API calls, UI logic, agent workflow, chat, upload, etc.
+   ============================================================ */
+
+'use strict';
+
+// ── State ─────────────────────────────────────────────────
+let currentRecipeText  = '';
+let currentIngredients = [];
+let sidebarOpen        = true;
+
+// ── On Load ───────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadStatus();
+  loadDocuments();
+  handleResponsiveSidebar();
+  window.addEventListener('resize', handleResponsiveSidebar);
+});
+
+function handleResponsiveSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (window.innerWidth <= 992) {
+    sidebar.classList.remove('mobile-open');
+    document.getElementById('mainContent').classList.add('expanded');
+    document.getElementById('siteFooter').classList.add('expanded');
+    sidebarOpen = false;
+  } else {
+    sidebar.classList.remove('mobile-open');
+    if (sidebarOpen) {
+      document.getElementById('mainContent').classList.remove('expanded');
+      document.getElementById('siteFooter').classList.remove('expanded');
+    }
+  }
+}
+
+// ── Sidebar Toggle ─────────────────────────────────────────
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+  const sidebar = document.getElementById('sidebar');
+  const main    = document.getElementById('mainContent');
+  const footer  = document.getElementById('siteFooter');
+  if (window.innerWidth <= 992) {
+    sidebar.classList.toggle('mobile-open');
+  } else {
+    sidebarOpen = !sidebarOpen;
+    sidebar.classList.toggle('collapsed', !sidebarOpen);
+    main.classList.toggle('expanded', !sidebarOpen);
+    footer.classList.toggle('expanded', !sidebarOpen);
+  }
+});
+
+// ── Section Navigation ─────────────────────────────────────
+document.querySelectorAll('.sidebar-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const sec = item.dataset.section;
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('section-' + sec).classList.add('active');
+    if (window.innerWidth <= 992) {
+      document.getElementById('sidebar').classList.remove('mobile-open');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+function navigateTo(section) {
+  document.querySelectorAll('.sidebar-item').forEach(i => {
+    i.classList.toggle('active', i.dataset.section === section);
+  });
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('section-' + section);
+  if (target) target.classList.add('active');
+}
+
+// ── Status Check ───────────────────────────────────────────
+async function loadStatus() {
+  try {
+    const res  = await fetch('/status');
+    const data = await res.json();
+    const badge = document.getElementById('statusBadge');
+    const text  = document.getElementById('statusText');
+    const chatMode = document.getElementById('chatMode');
+    if (!data.demo_mode) {
+      badge.className = 'status-badge live';
+      text.textContent = '🟢 IBM Granite Connected';
+      if (chatMode) chatMode.textContent = 'IBM Granite Active';
+    } else {
+      badge.className = 'status-badge demo';
+      text.textContent = '🟡 Demo Mode';
+    }
+    if (data.stats) {
+      document.getElementById('statRecipes').textContent = data.stats.recipes_generated || 0;
+      document.getElementById('statDocs').textContent    = data.stats.documents_uploaded || 0;
+    }
+  } catch (e) { /* silently ignore */ }
+}
+
+// ── Toast ──────────────────────────────────────────────────
+function showToast(msg, type = 'info', duration = 3500) {
+  const stack = document.getElementById('toastStack');
+  const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+  const div   = document.createElement('div');
+  div.className = `toast-item ${type}`;
+  div.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${msg}</span>`;
+  stack.appendChild(div);
+  setTimeout(() => div.remove(), duration);
+}
+
+// ── Loading Overlay ────────────────────────────────────────
+function showLoading(text = 'ChefGPT AI is thinking...', sub = 'Activating AI agents...') {
+  document.getElementById('loadingText').textContent    = text;
+  document.getElementById('loadingSubText').textContent = sub;
+  document.getElementById('loadingOverlay').classList.add('active');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('active');
+}
+
+// ── Quick Fill (dashboard suggestions) ────────────────────
+function quickFill(type) {
+  const map = {
+    paneer: { ing: 'paneer, onion, tomato, butter, cream', q: 'a creamy paneer curry' },
+    pasta:  { ing: 'pasta, garlic, zucchini, olive oil, parmesan', q: 'an Italian pasta dish' },
+    potato: { ing: 'potato, bread, spices, coriander', q: 'a quick potato sandwich' },
+  };
+  if (map[type]) {
+    document.getElementById('genIngredients').value = map[type].ing;
+    document.getElementById('genQuery').value        = map[type].q;
+  }
+  navigateTo('generator');
+}
+
+// ══════════════════════════════════════════════════════════
+// RECIPE GENERATOR
+// ══════════════════════════════════════════════════════════
+async function generateRecipe() {
+  const ingredients = document.getElementById('genIngredients').value.trim();
+  const query       = document.getElementById('genQuery').value.trim();
+  if (!ingredients && !query) {
+    showToast('Please enter ingredients or describe what you want to cook.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btnGenerate');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="inline-spinner"></span> Generating...';
+  showLoading('Generating your personalized recipe...', 'IBM Granite AI is crafting your recipe...');
+  resetWorkflow();
+
+  const payload = {
+    query:        query || `Generate a recipe using ${ingredients}`,
+    ingredients:  ingredients,
+    cuisine:      document.getElementById('genCuisine').value,
+    diet:         document.getElementById('genDiet').value,
+    cooking_time: document.getElementById('genTime').value,
+    difficulty:   document.getElementById('genDifficulty').value,
+    servings:     parseInt(document.getElementById('genServings').value) || 2,
+  };
+
+  try {
+    const res  = await fetch('/generate', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const data = await res.json();
+    hideLoading();
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-magic"></i> Generate Recipe';
+
+    if (data.error) { showToast(data.error, 'error'); return; }
+
+    renderRecipeResult(data);
+    animateWorkflow(data);
+    loadStatus();
+    showToast('Recipe generated successfully!', 'success');
+  } catch (err) {
+    hideLoading();
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-magic"></i> Generate Recipe';
+    showToast('Failed to generate recipe. Please try again.', 'error');
+  }
+}
+
+function renderRecipeResult(data) {
+  const gen     = data.generation || {};
+  const recipe  = gen.recipe_data || {};
+  const sources = (data.retrieval || {}).sources || [];
+
+  // Parse from recipe_data if available
+  const name        = recipe.name        || extractField(gen.recipe_text, 'Recipe Name') || 'Generated Recipe';
+  const description = recipe.description || extractField(gen.recipe_text, 'Description') || '';
+  const prepTime    = recipe.prep_time   || '15 mins';
+  const cookTime    = recipe.cook_time   || '30 mins';
+  const servings    = recipe.servings    || document.getElementById('genServings').value;
+  const difficulty  = recipe.difficulty  || document.getElementById('genDifficulty').value;
+  const cuisine     = recipe.cuisine     || document.getElementById('genCuisine').value;
+  const ingredients = recipe.ingredients && recipe.ingredients.length > 0
+                      ? recipe.ingredients
+                      : extractList(gen.recipe_text, 'Ingredients', 'Instructions');
+  const instructions = recipe.instructions && recipe.instructions.length > 0
+                       ? recipe.instructions
+                       : extractList(gen.recipe_text, 'Instructions', 'Tips');
+  const tips        = recipe.tips || extractList(gen.recipe_text, 'Tips', null);
+
+  currentRecipeText  = gen.recipe_text || '';
+  currentIngredients = ingredients;
+
+  document.getElementById('rcpName').textContent       = name;
+  document.getElementById('rcpDesc').textContent       = description;
+  document.getElementById('rcpPrepTime').textContent   = prepTime;
+  document.getElementById('rcpCookTime').textContent   = cookTime;
+  document.getElementById('rcpServings').textContent   = servings + ' servings';
+  document.getElementById('rcpDifficulty').textContent = difficulty;
+  document.getElementById('rcpCuisine').textContent    = cuisine;
+
+  // Ingredients
+  const ingContainer = document.getElementById('rcpIngredients');
+  ingContainer.innerHTML = '';
+  if (ingredients.length > 0) {
+    ingredients.forEach(ing => {
+      const chip = document.createElement('div');
+      chip.className = 'ingredient-chip';
+      chip.textContent = ing;
+      ingContainer.appendChild(chip);
+    });
+  } else {
+    ingContainer.innerHTML = '<div class="text-muted small">See full recipe text below.</div>';
+  }
+
+  // Instructions
+  const instrContainer = document.getElementById('rcpInstructions');
+  instrContainer.innerHTML = '';
+  if (instructions.length > 0) {
+    instructions.forEach((step, idx) => {
+      const li = document.createElement('li');
+      li.className = 'instruction-item';
+      li.innerHTML = `<div class="step-number">${idx + 1}</div><div class="step-text">${escHtml(step)}</div>`;
+      instrContainer.appendChild(li);
+    });
+  } else if (gen.recipe_text) {
+    instrContainer.innerHTML = `<li class="instruction-item"><div class="step-text" style="white-space:pre-wrap">${escHtml(gen.recipe_text)}</div></li>`;
+  }
+
+  // Tips
+  const tipsContainer = document.getElementById('rcpTips');
+  tipsContainer.innerHTML = '';
+  if (tips && tips.length > 0) {
+    document.getElementById('tipsDiv').style.display    = '';
+    document.getElementById('tipsHeading').style.display = '';
+    tips.forEach(tip => {
+      const li = document.createElement('li');
+      li.className = 'tip-item';
+      li.textContent = tip;
+      tipsContainer.appendChild(li);
+    });
+  } else {
+    document.getElementById('tipsDiv').style.display    = 'none';
+    document.getElementById('tipsHeading').style.display = 'none';
+  }
+
+  // Sources
+  const srcEl = document.getElementById('rcpSources');
+  if (sources.length > 0) {
+    srcEl.innerHTML = `<div class="sources-section">
+      <div class="sources-title">📎 Sources</div>
+      ${sources.map(s => `<div class="source-item">📄 ${escHtml(s)}</div>`).join('')}
+    </div>`;
+  } else {
+    srcEl.innerHTML = '';
+  }
+
+  // IBM / Demo note
+  document.getElementById('rcpAiNote').textContent = gen.used_ibm
+    ? '✅ Generated by IBM Granite AI via watsonx.ai'
+    : '🟡 Demo Mode – IBM Granite AI not connected';
+
+  // Show card
+  document.getElementById('recipePlaceholder').classList.add('d-none');
+  document.getElementById('recipeCard').classList.remove('d-none');
+}
+
+function extractField(text, field) {
+  if (!text) return '';
+  const m = text.match(new RegExp(field + '[:\\s]+(.+)', 'i'));
+  return m ? m[1].trim() : '';
+}
+
+function extractList(text, startMarker, endMarker) {
+  if (!text) return [];
+  const start = text.search(new RegExp(startMarker + '[:\\s]', 'i'));
+  if (start === -1) return [];
+  let snippet = text.slice(start + startMarker.length + 1);
+  if (endMarker) {
+    const end = snippet.search(new RegExp(endMarker + '[:\\s]', 'i'));
+    if (end > -1) snippet = snippet.slice(0, end);
+  }
+  return snippet.split('\n').map(l => l.trim().replace(/^[-•*\d.)\s]+/, '')).filter(l => l.length > 3);
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Workflow Animation ──────────────────────────────────────
+function resetWorkflow() {
+  for (let i = 1; i <= 5; i++) {
+    setAgentStatus(i, 'waiting');
+    document.getElementById('wf-output-' + i).textContent = '';
+  }
+  document.getElementById('orchestratorStatus').className = 'agent-status-badge waiting';
+  document.getElementById('orchestratorStatus').textContent = 'Waiting';
+}
+
+function setAgentStatus(num, status, output = '') {
+  const card   = document.getElementById('wf-agent-' + num);
+  const badge  = document.getElementById('wf-status-' + num);
+  const outEl  = document.getElementById('wf-output-' + num);
+  card.className  = 'agent-card ' + status;
+  badge.className = 'agent-status-badge ' + status;
+  badge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  if (output) outEl.textContent = output;
+}
+
+function animateWorkflow(data) {
+  const steps   = (data.workflow || []);
+  const delay   = 600;
+  const orchSt  = document.getElementById('orchestratorStatus');
+  orchSt.className   = 'agent-status-badge processing';
+  orchSt.textContent = 'Processing';
+
+  steps.forEach((step, idx) => {
+    const num = step.step;
+    setTimeout(() => setAgentStatus(num, 'processing'), idx * delay);
+    setTimeout(() => {
+      setAgentStatus(num, 'completed', step.output_summary || '');
+      if (idx === steps.length - 1) {
+        orchSt.className   = 'agent-status-badge completed';
+        orchSt.textContent = 'Completed';
+        showWorkflowSummary(data);
+      }
+    }, idx * delay + delay);
+  });
+
+  // Navigate to workflow tab after slight delay
+  setTimeout(() => {
+    // Don't auto-navigate – let user stay on generator page
+  }, 500);
+}
+
+function showWorkflowSummary(data) {
+  const card    = document.getElementById('workflowSummaryCard');
+  const content = document.getElementById('workflowSummaryContent');
+  const gen     = data.generation || {};
+  const nut     = data.nutrition  || {};
+  const shop    = data.shopping   || {};
+  content.innerHTML = `
+    <div class="mb-1">🍳 <strong>${(gen.recipe_data || {}).name || 'Recipe'}</strong></div>
+    <div class="mb-1">🥑 ${nut.summary || 'Nutrition estimated'}</div>
+    <div class="mb-1">🛒 ${shop.total_items || 0} shopping items</div>
+    <div>${data.used_ibm ? '✅ IBM Granite AI used' : '🟡 Demo Mode'}</div>
+  `;
+  card.style.display = '';
+}
+
+// ── Recipe Actions ─────────────────────────────────────────
+function generateShoppingFromRecipe() {
+  if (!currentIngredients.length && !currentRecipeText) {
+    showToast('Generate a recipe first.', 'error'); return;
+  }
+  document.getElementById('shopIngredients').value =
+    currentIngredients.length > 0
+      ? currentIngredients.join('\n')
+      : currentRecipeText.slice(0, 500);
+  document.getElementById('shopAvailable').value =
+    document.getElementById('genIngredients').value;
+  navigateTo('shopping');
+}
+
+function analyzeCurrentNutrition() {
+  if (!currentRecipeText) { showToast('Generate a recipe first.', 'error'); return; }
+  document.getElementById('nutRecipeText').value = currentRecipeText;
+  navigateTo('nutrition');
+}
+
+function adaptCurrentRecipe() {
+  if (!currentRecipeText) { showToast('Generate a recipe first.', 'error'); return; }
+  document.getElementById('adaptRecipeText').value = currentRecipeText;
+  navigateTo('adaptation');
+}
+
+function copyRecipe() {
+  const name  = document.getElementById('rcpName').textContent;
+  const ings  = [...document.querySelectorAll('#rcpIngredients .ingredient-chip')].map(c => '- ' + c.textContent).join('\n');
+  const steps = [...document.querySelectorAll('#rcpInstructions .step-text')].map((s,i) => (i+1) + '. ' + s.textContent).join('\n');
+  const text  = `${name}\n\nIngredients:\n${ings}\n\nInstructions:\n${steps}`;
+  navigator.clipboard.writeText(text).then(() => showToast('Recipe copied!', 'success'));
+}
+
+function printRecipe() { window.print(); }
+
+// ══════════════════════════════════════════════════════════
+// UPLOAD
+// ══════════════════════════════════════════════════════════
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.add('drag-over');
+}
+function handleDragLeave() {
+  document.getElementById('uploadZone').classList.remove('drag-over');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) processUpload(file);
+}
+function uploadFile(event) {
+  const file = event.target.files[0];
+  if (file) processUpload(file);
+}
+
+async function processUpload(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  if (!['pdf', 'txt'].includes(ext)) {
+    showToast('Only PDF and TXT files are supported.', 'error'); return;
+  }
+  if (file.size > 16 * 1024 * 1024) {
+    showToast('File too large (max 16 MB).', 'error'); return;
+  }
+
+  const progDiv  = document.getElementById('uploadProgress');
+  const progFill = document.getElementById('uploadProgressFill');
+  const progName = document.getElementById('uploadFileName');
+  const progStat = document.getElementById('uploadStatus');
+
+  progDiv.classList.remove('d-none');
+  progName.textContent = file.name;
+  progStat.textContent = 'Uploading...';
+  progFill.style.width = '30%';
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    progFill.style.width = '60%';
+    const res  = await fetch('/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (data.error) {
+      progFill.style.width = '0%';
+      progStat.textContent = 'Error: ' + data.error;
+      showToast(data.error, 'error');
+    } else {
+      progFill.style.width = '100%';
+      progStat.textContent = `✅ ${data.chunk_count} chunks indexed – Ready`;
+      showToast(data.message, 'success');
+      loadDocuments();
+      loadStatus();
+    }
+  } catch (e) {
+    progFill.style.width = '0%';
+    progStat.textContent = 'Upload failed.';
+    showToast('Upload failed. Please try again.', 'error');
+  }
+}
+
+async function loadDocuments() {
+  try {
+    const res  = await fetch('/documents');
+    const data = await res.json();
+    const list = document.getElementById('docList');
+    const cnt  = document.getElementById('docCount');
+    const docs = data.documents || [];
+    cnt.textContent = docs.length + ' document' + (docs.length !== 1 ? 's' : '');
+    document.getElementById('noDocsMsg').style.display = docs.length ? 'none' : '';
+
+    // Remove old dynamic items
+    list.querySelectorAll('.doc-item').forEach(el => el.remove());
+
+    docs.forEach(doc => {
+      const div = document.createElement('div');
+      div.className = 'doc-item';
+      div.innerHTML = `
+        <span class="doc-icon">📄</span>
+        <div class="doc-info">
+          <div class="doc-name">${escHtml(doc.filename)}</div>
+          <div class="doc-meta">${doc.chunk_count} chunks</div>
+        </div>
+        <span class="doc-status ready">${doc.status}</span>
+        <button class="btn-outline-custom btn-sm-custom ms-2" onclick="deleteDoc('${escHtml(doc.filename)}')">
+          <i class="bi bi-trash"></i>
+        </button>
+      `;
+      list.appendChild(div);
+    });
+  } catch (e) { /* ignore */ }
+}
+
+async function deleteDoc(filename) {
+  try {
+    const res = await fetch('/documents/' + encodeURIComponent(filename), { method: 'DELETE' });
+    const data = await res.json();
+    if (data.error) { showToast(data.error, 'error'); }
+    else { showToast(data.message, 'success'); loadDocuments(); loadStatus(); }
+  } catch (e) { showToast('Delete failed.', 'error'); }
+}
+
+// ══════════════════════════════════════════════════════════
+// SEARCH
+// ══════════════════════════════════════════════════════════
+async function searchRecipes() {
+  const query = document.getElementById('searchQuery').value.trim();
+  if (!query) { showToast('Please enter a search query.', 'error'); return; }
+
+  const resultsEl = document.getElementById('searchResults');
+  resultsEl.innerHTML = '<div class="text-muted small">Searching...</div>';
+
+  try {
+    const res  = await fetch('/search', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ query }) });
+    const data = await res.json();
+    if (data.error) { resultsEl.innerHTML = `<div class="text-danger small">${data.error}</div>`; return; }
+
+    if (!data.results || !data.results.length) {
+      resultsEl.innerHTML = '<div class="text-muted small">No matching recipes found. Try a different query.</div>';
+      return;
+    }
+    resultsEl.innerHTML = data.results.map(r => `
+      <div class="search-result-item">
+        <span class="search-score">Score: ${r.score}</span>
+        <div class="doc-meta mb-1">📄 ${escHtml(r.source)}</div>
+        <div class="search-chunk">${escHtml(r.chunk)}</div>
+      </div>
+    `).join('');
+  } catch (e) { resultsEl.innerHTML = '<div class="text-danger small">Search failed.</div>'; }
+}
+
+// ══════════════════════════════════════════════════════════
+// RECIPE ADAPTATION
+// ══════════════════════════════════════════════════════════
+async function adaptRecipe() {
+  const recipe = document.getElementById('adaptRecipeText').value.trim();
+  const diet   = document.getElementById('adaptDiet').value;
+  if (!recipe) { showToast('Please enter a recipe to adapt.', 'error'); return; }
+
+  showLoading('Adapting recipe...', `Making it ${diet}...`);
+  try {
+    const res  = await fetch('/adapt', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ recipe, diet }) });
+    const data = await res.json();
+    hideLoading();
+    if (data.error) { showToast(data.error, 'error'); return; }
+
+    document.getElementById('adaptPlaceholder').style.display = 'none';
+    document.getElementById('adaptResultCard').style.display  = '';
+    document.getElementById('adaptResult').textContent = data.adapted_recipe || '';
+
+    const changesEl = document.getElementById('adaptChanges');
+    if (data.changes && data.changes.length) {
+      changesEl.innerHTML = data.changes.map(c => `<span class="format-badge me-1">${escHtml(c)}</span>`).join('');
+    } else {
+      changesEl.textContent = 'No ingredient changes needed.';
+    }
+    showToast(`Recipe adapted to ${diet}!`, 'success');
+  } catch (e) {
+    hideLoading();
+    showToast('Adaptation failed.', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// SUBSTITUTION
+// ══════════════════════════════════════════════════════════
+function setSubIngredient(val) {
+  document.getElementById('subIngredient').value = val;
+}
+
+async function findSubstitution() {
+  const ingredient = document.getElementById('subIngredient').value.trim();
+  if (!ingredient) { showToast('Please enter an ingredient.', 'error'); return; }
+
+  const resultsEl = document.getElementById('subResults');
+  resultsEl.innerHTML = '<div class="text-muted small">Finding substitutes...</div>';
+
+  try {
+    const res  = await fetch('/substitute', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ ingredient }) });
+    const data = await res.json();
+    if (data.error) { resultsEl.innerHTML = `<div class="text-danger small">${data.error}</div>`; return; }
+
+    const subs = data.substitutes || [];
+    resultsEl.innerHTML = `
+      <div class="fw-bold mb-3">Substitutes for <span class="text-primary-custom">${escHtml(ingredient)}</span>:</div>
+      ${subs.map(s => `
+        <div class="substitution-card">
+          <span class="sub-arrow">→</span>
+          <div>
+            <div class="sub-name">${escHtml(s.substitute)}</div>
+            <div class="sub-reason">${escHtml(s.reason || '')}</div>
+          </div>
+        </div>
+      `).join('')}
+      ${data.used_ibm ? '<div class="small text-muted mt-2">✅ Powered by IBM Granite</div>' : ''}
+    `;
+  } catch (e) { resultsEl.innerHTML = '<div class="text-danger small">Request failed.</div>'; }
+}
+
+// ══════════════════════════════════════════════════════════
+// NUTRITION
+// ══════════════════════════════════════════════════════════
+async function analyzeNutrition() {
+  const recipe = document.getElementById('nutRecipeText').value.trim();
+  if (!recipe) { showToast('Please enter a recipe to analyze.', 'error'); return; }
+
+  showLoading('Analyzing nutrition...', 'Estimating nutritional values...');
+  try {
+    const res  = await fetch('/nutrition', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ recipe }) });
+    const data = await res.json();
+    hideLoading();
+    if (data.error) { showToast(data.error, 'error'); return; }
+
+    document.getElementById('nutPlaceholder').style.display = 'none';
+    document.getElementById('nutResultCard').style.display  = '';
+
+    const nut = data.nutrition || {};
+    const grid = document.getElementById('nutritionGrid');
+    grid.innerHTML = `
+      <div class="nutrition-card calories">
+        <div class="nutrition-value" style="color:#ef4444">${nut.calories || '~350'}</div>
+        <div class="nutrition-label">Calories</div>
+      </div>
+      <div class="nutrition-card protein">
+        <div class="nutrition-value" style="color:#3b82f6">${nut.protein || '~12g'}</div>
+        <div class="nutrition-label">Protein</div>
+      </div>
+      <div class="nutrition-card carbs">
+        <div class="nutrition-value" style="color:#f59e0b">${nut.carbs || '~45g'}</div>
+        <div class="nutrition-label">Carbs</div>
+      </div>
+      <div class="nutrition-card fat">
+        <div class="nutrition-value" style="color:#8b5cf6">${nut.fat || '~14g'}</div>
+        <div class="nutrition-label">Fat</div>
+      </div>
+      <div class="nutrition-card fiber">
+        <div class="nutrition-value" style="color:#22c55e">${nut.fiber || '~5g'}</div>
+        <div class="nutrition-label">Fiber</div>
+      </div>
+    `;
+    document.getElementById('nutSummary').textContent    = data.summary || '';
+    document.getElementById('nutDisclaimer').textContent = data.disclaimer || '';
+    showToast('Nutrition analysis complete!', 'success');
+  } catch (e) {
+    hideLoading();
+    showToast('Nutrition analysis failed.', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// SHOPPING LIST
+// ══════════════════════════════════════════════════════════
+async function generateShoppingList() {
+  const raw       = document.getElementById('shopIngredients').value.trim();
+  const available = document.getElementById('shopAvailable').value.trim();
+  if (!raw) { showToast('Please enter recipe ingredients.', 'error'); return; }
+
+  const ingredients = raw.split('\n').map(l => l.trim()).filter(Boolean);
+
+  showLoading('Building your shopping list...', 'Categorising ingredients...');
+  try {
+    const res  = await fetch('/shopping-list', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ ingredients, available }) });
+    const data = await res.json();
+    hideLoading();
+    if (data.error) { showToast(data.error, 'error'); return; }
+
+    renderShoppingList(data);
+    showToast('Shopping list ready!', 'success');
+  } catch (e) {
+    hideLoading();
+    showToast('Shopping list generation failed.', 'error');
+  }
+}
+
+const CATEGORY_ICONS = {
+  Vegetables: '🥕', Dairy: '🥛', Protein: '🥩',
+  Spices: '🌶', Grains: '🍚', Fruits: '🍎', Other: '🧂'
+};
+
+function renderShoppingList(data) {
+  document.getElementById('shopPlaceholder').style.display = 'none';
+  document.getElementById('shopResultCard').style.display  = '';
+
+  const listEl = data.shopping_list || {};
+  const total  = data.total_items || 0;
+  document.getElementById('shopItemCount').textContent = total + ' item' + (total !== 1 ? 's' : '');
+
+  const shopEl = document.getElementById('shopList');
+  shopEl.innerHTML = '';
+
+  if (total === 0) {
+    shopEl.innerHTML = '<div class="text-muted text-center py-3">You already have everything! 🎉</div>';
+    return;
+  }
+
+  let checkId = 0;
+  Object.entries(listEl).forEach(([cat, items]) => {
+    const icon = CATEGORY_ICONS[cat] || '🧂';
+    const catDiv = document.createElement('div');
+    catDiv.className = 'shopping-category';
+    catDiv.innerHTML = `<div class="category-header">${icon} ${escHtml(cat)}</div>`;
+    items.forEach(item => {
+      const id  = 'chk-' + (++checkId);
+      const div = document.createElement('div');
+      div.className = 'shop-item';
+      div.innerHTML = `
+        <input type="checkbox" id="${id}"/>
+        <label for="${id}">${escHtml(item)}</label>
+      `;
+      catDiv.appendChild(div);
+    });
+    shopEl.appendChild(catDiv);
+  });
+}
+
+function copyShoppingList() {
+  const lines = [...document.querySelectorAll('#shopList .shop-item label')].map(l => '☐ ' + l.textContent);
+  navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('Shopping list copied!', 'success'));
+}
+function printShoppingList() { window.print(); }
+function clearCompleted() {
+  document.querySelectorAll('#shopList input[type=checkbox]:checked').forEach(cb => cb.closest('.shop-item').remove());
+  showToast('Completed items cleared.', 'success');
+}
+
+// ══════════════════════════════════════════════════════════
+// AI CHAT
+// ══════════════════════════════════════════════════════════
+function sendSuggestion(el) {
+  document.getElementById('chatInput').value = el.textContent;
+  sendChat();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg   = input.value.trim();
+  if (!msg) return;
+
+  appendChatMessage('user', msg);
+  input.value = '';
+
+  const typing = appendChatMessage('bot', '⏳ ChefGPT AI is thinking...');
+
+  try {
+    const res  = await fetch('/chat', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ message: msg }) });
+    const data = await res.json();
+    typing.querySelector('.msg-bubble').innerHTML = data.error
+      ? `❌ ${escHtml(data.error)}`
+      : formatChatResponse(data.response, data.sources);
+  } catch (e) {
+    typing.querySelector('.msg-bubble').textContent = '❌ Failed to get response. Please try again.';
+  }
+  scrollChat();
+}
+
+function appendChatMessage(role, text) {
+  const container = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `chat-message ${role}`;
+  div.innerHTML = `
+    <div class="msg-avatar">${role === 'user' ? '👤' : '🍳'}</div>
+    <div class="msg-bubble">${role === 'user' ? escHtml(text) : escHtml(text)}</div>
+  `;
+  container.appendChild(div);
+  scrollChat();
+  return div;
+}
+
+function formatChatResponse(text, sources) {
+  let html = escHtml(text).replace(/\n/g, '<br>');
+  if (sources && sources.length) {
+    html += `<div class="sources-section mt-2">
+      <div class="sources-title">📎 Sources</div>
+      ${sources.map(s => `<div class="source-item">📄 ${escHtml(s)}</div>`).join('')}
+    </div>`;
+  }
+  return html;
+}
+
+function scrollChat() {
+  const msgs = document.getElementById('chatMessages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+</body>
+</html>
