@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ChefGPT AI – Intelligent Recipe Generator</title>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="./style.css" />
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <!-- Bootstrap Icons -->
@@ -899,6 +899,12 @@ let currentRecipeText  = '';
 let currentIngredients = [];
 let sidebarOpen        = true;
 
+// ── API Base URL detection ─────────────────────────────────
+// On GitHub Pages there is no Flask backend; all API calls will
+// gracefully fail and fall back to demo responses.
+const IS_GITHUB_PAGES = location.hostname.endsWith('github.io');
+const API = IS_GITHUB_PAGES ? null : '';   // '' = same-origin (Flask)
+
 // ── On Load ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadStatus();
@@ -964,6 +970,7 @@ function navigateTo(section) {
 
 // ── Status Check ───────────────────────────────────────────
 async function loadStatus() {
+  if (IS_GITHUB_PAGES) return; // no backend on GitHub Pages
   try {
     const res  = await fetch('/status');
     const data = await res.json();
@@ -1021,6 +1028,61 @@ function quickFill(type) {
 }
 
 // ══════════════════════════════════════════════════════════
+// DEMO DATA HELPERS (used when running on GitHub Pages)
+// ══════════════════════════════════════════════════════════
+function demoRecipe(payload) {
+  const ing = payload.ingredients || 'paneer, onion, tomato';
+  return {
+    generation: {
+      recipe_text: '',
+      recipe_data: {
+        name: 'Demo: ' + (payload.query || 'AI Recipe'),
+        description: `A delicious recipe using ${ing}. (Demo mode — connect the Flask backend for real IBM Granite AI recipes.)`,
+        prep_time: '15 mins', cook_time: '25 mins',
+        servings: payload.servings || 2,
+        difficulty: payload.difficulty || 'Easy',
+        cuisine: payload.cuisine || 'Any',
+        ingredients: ing.split(',').map(i => i.trim()).filter(Boolean),
+        instructions: [
+          'Prepare and chop all ingredients.',
+          'Heat oil in a pan over medium heat.',
+          'Add aromatics (onion, garlic) and sauté until golden.',
+          'Add main ingredients and cook for 10–15 minutes.',
+          'Season to taste and serve hot.',
+        ],
+        tips: ['This is a demo recipe. Run the Flask backend for AI-generated recipes.'],
+      }
+    },
+    retrieval: { sources: [] }
+  };
+}
+
+function demoSubstitutes(ingredient) {
+  const map = {
+    egg:     [{ substitute: 'Flax egg (1 tbsp flax + 3 tbsp water)', reason: 'Works as a binder in baking' },
+              { substitute: 'Unsweetened applesauce (¼ cup)', reason: 'Adds moisture and binding' }],
+    butter:  [{ substitute: 'Coconut oil', reason: '1:1 replacement, adds mild flavour' },
+              { substitute: 'Olive oil', reason: 'Use ¾ of the butter quantity' }],
+    milk:    [{ substitute: 'Oat milk', reason: 'Neutral flavour, works in most recipes' },
+              { substitute: 'Almond milk', reason: 'Lower calories, slight nutty taste' }],
+    paneer:  [{ substitute: 'Tofu (firm)', reason: 'Similar texture, absorbs sauces well' },
+              { substitute: 'Halloumi', reason: 'Holds shape when cooked' }],
+    cream:   [{ substitute: 'Coconut cream', reason: 'Rich and creamy, dairy-free' },
+              { substitute: 'Cashew cream', reason: 'Blend soaked cashews for a thick cream' }],
+    sugar:   [{ substitute: 'Honey (¾ ratio)', reason: 'Natural sweetener with extra moisture' },
+              { substitute: 'Maple syrup', reason: 'Adds a slight caramel note' }],
+    flour:   [{ substitute: 'Almond flour', reason: 'Gluten-free, denser texture' },
+              { substitute: 'Oat flour', reason: 'Mild taste, use same quantity' }],
+    chicken: [{ substitute: 'Chickpeas', reason: 'High protein, works in curries & stews' },
+              { substitute: 'Paneer or tofu', reason: 'Absorbs spices, similar bulk' }],
+  };
+  const key = ingredient.toLowerCase().replace(/s$/, '');
+  return map[key] || [
+    { substitute: 'Check a recipe substitution guide', reason: `No demo data for "${ingredient}" — connect Flask backend for AI substitutions.` }
+  ];
+}
+
+// ══════════════════════════════════════════════════════════
 // RECIPE GENERATOR
 // ══════════════════════════════════════════════════════════
 async function generateRecipe() {
@@ -1047,6 +1109,16 @@ async function generateRecipe() {
     servings:     parseInt(document.getElementById('genServings').value) || 2,
   };
 
+  if (IS_GITHUB_PAGES) {
+    await new Promise(r => setTimeout(r, 1200));
+    hideLoading();
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-magic"></i> Generate Recipe';
+    renderRecipeResult(demoRecipe(payload));
+    animateWorkflow({});
+    showToast('Demo recipe generated! (Connect Flask backend for real AI)', 'info');
+    return;
+  }
   try {
     const res  = await fetch('/generate', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     const data = await res.json();
@@ -1328,6 +1400,12 @@ async function processUpload(file) {
   const formData = new FormData();
   formData.append('file', file);
 
+  if (IS_GITHUB_PAGES) {
+    progFill.style.width = '100%';
+    progStat.textContent = '⚠️ Demo mode – file upload requires Flask backend.';
+    showToast('File upload requires the Flask backend to be running.', 'warning');
+    return;
+  }
   try {
     progFill.style.width = '60%';
     const res  = await fetch('/upload', { method: 'POST', body: formData });
@@ -1351,6 +1429,7 @@ async function processUpload(file) {
 }
 
 async function loadDocuments() {
+  if (IS_GITHUB_PAGES) return; // no backend
   try {
     const res  = await fetch('/documents');
     const data = await res.json();
@@ -1383,6 +1462,7 @@ async function loadDocuments() {
 }
 
 async function deleteDoc(filename) {
+  if (IS_GITHUB_PAGES) { showToast('Delete requires the Flask backend.', 'warning'); return; }
   try {
     const res = await fetch('/documents/' + encodeURIComponent(filename), { method: 'DELETE' });
     const data = await res.json();
@@ -1401,6 +1481,10 @@ async function searchRecipes() {
   const resultsEl = document.getElementById('searchResults');
   resultsEl.innerHTML = '<div class="text-muted small">Searching...</div>';
 
+  if (IS_GITHUB_PAGES) {
+    resultsEl.innerHTML = '<div class="text-muted small">⚠️ Knowledge base search requires the Flask backend. Run the app locally to use this feature.</div>';
+    return;
+  }
   try {
     const res  = await fetch('/search', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ query }) });
     const data = await res.json();
@@ -1429,6 +1513,16 @@ async function adaptRecipe() {
   if (!recipe) { showToast('Please enter a recipe to adapt.', 'error'); return; }
 
   showLoading('Adapting recipe...', `Making it ${diet}...`);
+  if (IS_GITHUB_PAGES) {
+    await new Promise(r => setTimeout(r, 800));
+    hideLoading();
+    document.getElementById('adaptPlaceholder').style.display = 'none';
+    document.getElementById('adaptResultCard').style.display  = '';
+    document.getElementById('adaptResult').textContent = `[Demo] Adapted to ${diet}:\n\n` + recipe;
+    document.getElementById('adaptChanges').textContent = 'Demo mode – connect Flask backend for real AI adaptation.';
+    showToast('Demo adaptation shown. Connect Flask backend for real AI.', 'info');
+    return;
+  }
   try {
     const res  = await fetch('/adapt', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ recipe, diet }) });
     const data = await res.json();
@@ -1466,6 +1560,22 @@ async function findSubstitution() {
   const resultsEl = document.getElementById('subResults');
   resultsEl.innerHTML = '<div class="text-muted small">Finding substitutes...</div>';
 
+  if (IS_GITHUB_PAGES) {
+    const demoSubs = demoSubstitutes(ingredient);
+    resultsEl.innerHTML = `
+      <div class="fw-bold mb-3">Substitutes for <span class="text-primary-custom">${escHtml(ingredient)}</span>: <span class="text-muted small">(demo)</span></div>
+      ${demoSubs.map(s => `
+        <div class="substitution-card">
+          <span class="sub-arrow">→</span>
+          <div>
+            <div class="sub-name">${escHtml(s.substitute)}</div>
+            <div class="sub-reason">${escHtml(s.reason)}</div>
+          </div>
+        </div>
+      `).join('')}
+    `;
+    return;
+  }
   try {
     const res  = await fetch('/substitute', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ ingredient }) });
     const data = await res.json();
@@ -1496,6 +1606,27 @@ async function analyzeNutrition() {
   if (!recipe) { showToast('Please enter a recipe to analyze.', 'error'); return; }
 
   showLoading('Analyzing nutrition...', 'Estimating nutritional values...');
+  if (IS_GITHUB_PAGES) {
+    await new Promise(r => setTimeout(r, 700));
+    hideLoading();
+    const demoNut = { calories: '~380 kcal', protein: '~14g', carbs: '~42g', fat: '~16g', fiber: '~6g' };
+    const data = { nutrition: demoNut, summary: 'Demo estimates only.', disclaimer: 'Connect the Flask backend for real AI-powered nutrition analysis.' };
+    // fall through to render
+    document.getElementById('nutPlaceholder').style.display = 'none';
+    document.getElementById('nutResultCard').style.display  = '';
+    const grid = document.getElementById('nutritionGrid');
+    grid.innerHTML = `
+      <div class="nutrition-card calories"><div class="nutrition-value" style="color:#ef4444">${demoNut.calories}</div><div class="nutrition-label">Calories</div></div>
+      <div class="nutrition-card protein"><div class="nutrition-value" style="color:#3b82f6">${demoNut.protein}</div><div class="nutrition-label">Protein</div></div>
+      <div class="nutrition-card carbs"><div class="nutrition-value" style="color:#f59e0b">${demoNut.carbs}</div><div class="nutrition-label">Carbs</div></div>
+      <div class="nutrition-card fat"><div class="nutrition-value" style="color:#8b5cf6">${demoNut.fat}</div><div class="nutrition-label">Fat</div></div>
+      <div class="nutrition-card fiber"><div class="nutrition-value" style="color:#22c55e">${demoNut.fiber}</div><div class="nutrition-label">Fiber</div></div>
+    `;
+    document.getElementById('nutSummary').textContent    = data.summary;
+    document.getElementById('nutDisclaimer').textContent = data.disclaimer;
+    showToast('Demo nutrition shown. Connect Flask backend for real AI.', 'info');
+    return;
+  }
   try {
     const res  = await fetch('/nutrition', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ recipe }) });
     const data = await res.json();
@@ -1549,6 +1680,15 @@ async function generateShoppingList() {
   const ingredients = raw.split('\n').map(l => l.trim()).filter(Boolean);
 
   showLoading('Building your shopping list...', 'Categorising ingredients...');
+  if (IS_GITHUB_PAGES) {
+    await new Promise(r => setTimeout(r, 600));
+    hideLoading();
+    const avail = available.toLowerCase().split(',').map(s => s.trim()).filter(Boolean);
+    const needed = ingredients.filter(i => !avail.some(a => i.toLowerCase().includes(a)));
+    renderShoppingList({ shopping_list: { 'Ingredients': needed }, total_items: needed.length });
+    showToast('Demo shopping list ready! Connect Flask backend for smart categorisation.', 'info');
+    return;
+  }
   try {
     const res  = await fetch('/shopping-list', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ ingredients, available }) });
     const data = await res.json();
@@ -1632,6 +1772,15 @@ async function sendChat() {
 
   const typing = appendChatMessage('bot', '⏳ ChefGPT AI is thinking...');
 
+  if (IS_GITHUB_PAGES) {
+    await new Promise(r => setTimeout(r, 600));
+    typing.querySelector('.msg-bubble').innerHTML = formatChatResponse(
+      `I'm running in demo mode on GitHub Pages. To chat with real IBM Granite AI, clone the repo and run the Flask backend locally with your watsonx.ai credentials.\n\nYou asked: "${msg}"\n\nHere's a demo tip: Try paneer tikka masala — marinate paneer in yogurt and spices, then grill and serve in a creamy tomato sauce! 🍛`,
+      []
+    );
+    scrollChat();
+    return;
+  }
   try {
     const res  = await fetch('/chat', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ message: msg }) });
     const data = await res.json();
